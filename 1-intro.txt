@@ -1,0 +1,314 @@
+node : environment to run JS outside the Browser
+
+{
+  const amount = 9;
+
+  if (amount < 10) {
+    console.log("small number");
+  } else {
+    console.log("large number");
+  }
+
+  console.log("hey its my first node app");
+} //to run it in the terminal we run (node app.js)
+
+
+
+
+
+
+  GLOBALS  -NO WINDOW !!! (GLOBAL VARIABLES MEANS anywhere in your application you can access them)
+  __dirname  -- path to current directory
+  __filename -- file name
+  require  -- function to use modules (CommonJS)
+  module  --info about current module (file)
+  process  --info about env where the program in being executed
+{
+  setInterval(() => {
+    console.log("hello world");
+  }, 1000);
+}  setInterval: This is a function in JavaScript that repeatedly calls a function or evaluates a code snippet with a fixed time delay between each call.
+
+ () => { console.log('hello world'); }: This is an arrow function (ES6 syntax) that defines the code to be executed at each interval. In this case, it simply logs the string 'hello world' to the console.
+
+ 1000: This is the interval duration specified in milliseconds. In this example, the code inside the arrow function will be executed every 1000 milliseconds, which is equivalent to 1 second.
+
+
+
+
+
+
+MODULES : Encapsulated code (only share minimum)
+Node uses Common js and EVERY FILE IS MODULE (by default)
+
+ WHEN WE RUN CONSOLE.LOG(MODULES) WE GET:(Module {
+   id: '.',
+   path: 'C:\\Users\\Admin\\Desktop\\node',
+   exports: {},
+   filename: 'C:\\Users\\Admin\\Desktop\\node\\names.js',
+   loaded: false,
+   children: [],
+   paths: [
+     'C:\\Users\\Admin\\Desktop\\node\\node_modules',
+     'C:\\Users\\Admin\\Desktop\\node_modules',
+     'C:\\Users\\Admin\\node_modules',
+     'C:\\Users\\node_modules',
+     'C:\\node_modules'
+   ])  
+  and the important ine is exports: {},  in this objects anything we dump in the export we cam access it anywhere in th application
+   now we have the names.js file that have (const peter = 'peter' ;const john = 'john'; const secret = 'SUPER SECRET')
+   and in the utiles.js  that have(const sayHi  = (name) => { console.log(`hello there ${name}`) }) and in the app.js we have (sayHi('fouez')
+ sayHi(john)
+ sayHi(peter))
+  soo we use this (module.exports = { john, peter };)  to export what we want to share with the other files
+  and to access those variables in other file we user (const names = require(./names))
+  and when we log them (console.log(names);)  we will get ({ john: 'john', peter: 'peter' })
+
+sooo in the names.js we have (// share
+const peter = "peter";
+const john = "john";
+// local
+const secret = "SUPER SECRET";
+
+module.exports = { john, peter };)  and in the (utiles.js  )we have (const sayHi  = (name) => {
+    console.log(`hello there ${name}`)
+}
+
+module.exports = sayHi )  and in the (app.js ) we have (const names = require('./names')
+const sayHi = require('./utiles')
+
+sayHi('fouez')
+sayHi(names.john)
+sayHi(names.peter))
+
+
+
+
+
+
+
+
+
+
+
+const os = require('os');: This line imports the Node.js os module, which provides a way to interact with the operating system.
+
+os.uptime(): This method returns the system uptime in seconds. It represents the number of seconds the system has been running.
+(const os = require("os");
+
+//info about the user
+const user = os.userInfo();
+console.log(user);
+
+//method returns the system uptime in secondes
+console.log(`the system uptime is ${os.uptime()} secondes`);
+const currentOS = {
+    name:os.type(),
+    release : os.release(),
+    totalMem : os.totalmem(),
+    freeMem : os.freemem(),
+}
+console.log(currentOS);
+)
+
+
+
+
+
+
+
+const path = require('path');: This line imports the Node.js path module, which provides utilities for working with file and directory paths.
+const filePath = path.join('/content/', 'subfolder', 'test.txt')
+console.log(filePath);
+path.join('/content/', 'subfolder', 'test.txt'): The path.join() method is used to join the provided path segments into a single path. In this case, it concatenates /content/, subfolder, and test.txt to create a valid file path. The result will depend on the platform's path separator.
+const filePath = path.join('/content/', 'subfolder', 'test.txt', 'fouez.txt')
+
+console.log(filePath);
+
+const base = path.basename(filePath)
+console.log(base);
+
+const absolute = path.resolve(__dirname, 'content', 'subfolder','fouez' ,'test.txt')
+console.log(absolute);(C:\Users\Admin\Desktop\node>node app.js
+\
+\content\subfolder\test.txt\fouez.txt
+fouez.txt
+C:\Users\Admin\Desktop\node\content\subfolder\fouez\test.txt)
+
+
+
+
+
+
+
+
+
+
+sync
+const { readFileSync, writeFileSync } = require("fs");
+
+const first = readFileSync("./content/first.txt", "utf8");
+const second = readFileSync("./content/second.txt", "utf-8");
+
+console.log(first, second) To read from a text file(first.txt) and console log the text in them
+
+writeFileSync(
+  "./content/result-sync.txt",
+  `here is the result : ${first} , ${second}`
+); to see if there is a file with that name if it exist it override it with the new text and if in not there it create it and add the text to it
+
+writeFileSync(
+  "./content/result-sync.txt",
+  `here is the result : ${first} , ${second}`,
+  { flag: "a" }
+);when we add the {flag:"a"}  it append to the file the text not override it like the brevious one
+
+
+const { readFile, writeFile } = require("fs");
+
+readFile('./content/first.txt', 'utf-8', (err,result)=>{
+    if(err){
+        console.log(err);
+        return
+    }
+    console.log(result);
+})The third parameter is a callback function that gets executed once the file reading is complete. It takes two parameters: err and result.
+In the context of the readFile function, the callback function is expected to have two parameters:
+
+err: This parameter will contain an error object if an error occurs during the file reading operation. If there is no error, this parameter will be null.
+
+result: This parameter will contain the contents of the file if the file reading is successful. If there is an error, this parameter may not be defined, and it's common to check the value of err before attempting to use result.
+
+The choice of variable names (err and result) is a convention often used in Node.js callback patterns, but you could technically choose different names if you prefer, as long as you update the function signature accordingly.
+
+
+
+
+
+
+
+async
+const { readFile, writeFile } = require("fs");
+
+readFile("./content/first.txt", "utf-8", (err, result) => {
+  if (err) {
+    console.log(err);
+    return;
+  }
+  const first = result;
+
+  readFile("./content/second.txt", "utf-8", (error, data) => {
+    if (error) {
+      console.log(error);
+      return;
+    }
+    const second = data;
+
+    // Use a relative path instead of an absolute path
+    writeFile("./content/result-async.txt", `hi there: ${first}, ${second}`, (writeError) => {
+      if (writeError) {
+        console.log(writeError);
+        return;
+      }
+      console.log("Write operation completed successfully!");
+    });
+  });
+});
+
+
+
+
+
+
+
+http
+const server = http.createServer((req,res)=>{
+
+})
+this function have 2 parameters (both are objects)
+req: represente the incoming request (image a client is requesting from the browser your web page so it will have informations in the request object)
+res :will have what we are sending back to the client
+
+const http = require("http");
+
+const server = http.createServer((req, res) => {
+  res.write("welcome to our home page");
+  res.end();
+});
+
+server.listen(5000);
+
+
+const http = require("http");
+
+const server = http.createServer((req, res) => {
+  if (req.url === "/") {
+    res.end("welcome to our home page");
+  }
+  else if (req.url === "/about") {
+    res.end("this is the about page");
+  } else {
+    res.end(`
+        <h1>Oooops!</h1>
+        <p>We cant seem to find the page you are looking for</p>
+        <a href="/">back home</a>
+    `);
+  }
+});
+
+server.listen(5000);
+
+
+
+
+
+npm :node package manager
+enable us to do 3 tings:
+1-reuse our code in other projects
+2-use code writen by other developers
+3-share our own sollutions with other develpers
+
+npm call the a reusable code (package:folder contain a js code)
+module = depenency = package(all mean the same thing)
+
+npm --version   to see the version of the npm
+npm i <packageNAme> to install the packages in the npm as local depenency (use it only in the project)
+npm install -g <packageName> to install the packages in the npm as global depenency (use it in any project)
+
+
+package.json  - manifest file(stores important info about project/package)
+we can create that file by:
+1. manual approach (create package.json in the root ,create properties ...)
+2. npm init (step bu step, press enter to skip)
+npm init -y (everything default)
+
+(
+const _ = require("lodash");
+
+const items = [1, [2, [3, [4]]]];
+const newItems = _.flattenDeep(items);
+
+console.log(newItems);
+
+[ 1, 2, 3, 4 ]  //is the result 
+)
+
+
+
+
+
+
+
+
+
+
+
+
+git :
+we are importing the node project in the github so:
+1)we create a repository we the name (rep-node-tut) 
+2)in our project we create a file with the name for (.gitignore) that will contain the things that we don't want to import bcz they are jayint folder (node_modules folder)
+3)inside the .gitignore we write (/node_modules)  (the folder or the file that we want to ignore)
+Initialize a Git repository:
+If the current directory is not a Git repository, you need to initialize one using the following command: git init
+
